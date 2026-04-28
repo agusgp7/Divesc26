@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charlas en Escuelas</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">🎒</div>
+        <div>
+          <h1>Charlas en Escuelas</h1>
+          <p>Mapa de seguimiento</p>
+        </div>
+      </div>
+
+      <button class="nav active" data-section="mapa">📍 Mapa</button>
+      <button class="nav" data-section="planilla">📋 Planilla</button>
+      <button class="nav" data-section="estadisticas">📊 Estadísticas</button>
+      <button class="nav" data-section="datos">💾 Importar / Exportar</button>
+    </aside>
+
+    <main class="main">
+      <section class="stats">
+        <div class="card"><span>Total</span><strong id="statTotal">0</strong></div>
+        <div class="card green"><span>Realizadas</span><strong id="statVerdes">0</strong></div>
+        <div class="card yellow"><span>Coordinadas</span><strong id="statAmarillas">0</strong></div>
+        <div class="card red"><span>Sin coordinar</span><strong id="statRojas">0</strong></div>
+        <div class="card purple"><span>Prioritarias</span><strong id="statPrioritarias">0</strong></div>
+        <div class="card blue"><span>Alumnos</span><strong id="statAlumnos">0</strong></div>
+      </section>
+
+      <section id="mapa" class="section active">
+        <div class="toolbar">
+          <button onclick="filtrarEstado('todos')">Todas</button>
+          <button onclick="filtrarEstado('rojo')">🔴 Sin coordinar</button>
+          <button onclick="filtrarEstado('amarillo')">🟡 Coordinadas</button>
+          <button onclick="filtrarEstado('verde')">🟢 Realizadas</button>
+          <button onclick="filtrarPrioritarias()">⭐ Túnicas en Red</button>
+          <button class="primary" onclick="abrirModalAgregar()">+ Agregar escuela</button>
+        </div>
+
+        <div class="map-layout">
+          <div id="map"></div>
+
+          <aside id="panelDetalle" class="detail-panel">
+            <button class="close" onclick="cerrarDetalle()">×</button>
+            <h2>Seleccioná una escuela</h2>
+            <p>Hacé clic en un pin del mapa o en una fila de la planilla.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="planilla" class="section">
+        <div class="toolbar">
+          <input id="buscar" type="text" placeholder="Buscar escuela..." oninput="renderTabla()" />
+          <button class="primary" onclick="abrirModalAgregar()">+ Agregar escuela</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Escuela</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Tipo</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+                <th>Prioritaria</th>
+                <th>Fecha coord.</th>
+                <th>Fecha real.</th>
+                <th>Alumnos</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaEscuelas"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="estadisticas" class="section">
+        <div class="empty-card">
+          <h2>Estadísticas</h2>
+          <p>Acá vas a ver el avance anual de las charlas.</p>
+          <div id="resumenTexto"></div>
+        </div>
+      </section>
+
+      <section id="datos" class="section">
+        <div class="empty-card">
+          <h2>Importar / Exportar</h2>
+          <p>Exportá tus escuelas a JSON para respaldo o para subir una nueva versión.</p>
+
+          <div class="data-actions">
+            <button class="primary" onclick="exportarJSON()">Exportar JSON</button>
+            <label class="upload">
+              Importar JSON
+              <input type="file" accept=".json" onchange="importarJSON(event)" />
+            </label>
+            <button class="danger" onclick="borrarTodo()">Borrar todo</button>
+          </div>
+
+          <textarea id="jsonPreview" readonly placeholder="Acá aparecerá el JSON exportado..."></textarea>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close" onclick="cerrarModal()">×</button>
+      <h2 id="modalTitulo">Agregar escuela</h2>
+
+      <form id="formEscuela">
+        <input type="hidden" id="editId" />
+
+        <div class="grid">
+          <label>Escuela N° <input id="escuela" required /></label>
+          <label>Nombre <input id="nombre" /></label>
+          <label>Dirección <input id="direccion" required /></label>
+          <label>Localidad <input id="localidad" /></label>
+          <label>Departamento <input id="departamento" /></label>
+          <label>Tipo <input id="tipo" placeholder="Pública - Urbana" /></label>
+          <label>Teléfono <input id="telefono" /></label>
+          <label>Latitud <input id="lat" type="number" step="any" required /></label>
+          <label>Longitud <input id="lng" type="number" step="any" required /></label>
+
+          <label>Estado
+            <select id="estado">
+              <option value="rojo">Sin coordinar</option>
+              <option value="amarillo">Coordinada</option>
+              <option value="verde">Realizada</option>
+            </select>
+          </label>
+
+          <label>Fecha coordinada <input id="fechaCoordinada" type="datetime-local" /></label>
+          <label>Fecha realizada <input id="fechaRealizada" type="datetime-local" /></label>
+          <label>Charlistas <input id="charlistas" /></label>
+          <label>Alumnos <input id="alumnos" type="number" min="0" /></label>
+          <label>Imagen grupo / link <input id="imagenGrupo" /></label>
+          <label>Formulario firmado / link <input id="imagenFormulario" /></label>
+        </div>
+
+        <label class="check">
+          <input id="prioritaria" type="checkbox" />
+          Prioritaria Túnicas en Red
+        </label>
+
+        <label>Observaciones
+          <textarea id="observaciones"></textarea>
+        </label>
+
+        <button class="primary full" type="submit">Guardar escuela</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
