@@ -365,3 +365,63 @@ label {
     grid-template-columns: 1fr;
   }
 }
+
+/* Controles del mapa */
+.map-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.filter-btn:hover {
+  transform: translateY(-1px);
+}
+
+.filter-btn:active {
+  transform: scale(0.96);
+}
+
+.filter-btn.active {
+  background: #0f9f8f;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 12px #0f9f8f55;
+}
+
+.add-school-btn {
+  margin-left: auto;
+  color: white !important;
+  background: #0f9f8f !important;
+  white-space: nowrap;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.add-school-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px #0f9f8f55;
+}
+
+.add-school-btn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 1000px) {
+  .map-toolbar {
+    align-items: stretch;
+  }
+
+  .add-school-btn {
+    margin-left: 0;
+  }
+}
