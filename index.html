@@ -36,13 +36,16 @@
       </section>
 
       <section id="mapa" class="section active">
-        <div class="toolbar">
-          <button onclick="filtrarEstado('todos')">Todas</button>
-          <button onclick="filtrarEstado('rojo')">🔴 Sin coordinar</button>
-          <button onclick="filtrarEstado('amarillo')">🟡 Coordinadas</button>
-          <button onclick="filtrarEstado('verde')">🟢 Realizadas</button>
-          <button onclick="filtrarPrioritarias()">⭐ Túnicas en Red</button>
-          <button class="primary" onclick="abrirModalAgregar()">+ Agregar escuela</button>
+        <div class="toolbar map-toolbar">
+          <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filtrarEstado('todos', this)">Todas</button>
+            <button class="filter-btn" onclick="filtrarEstado('rojo', this)">🔴 Sin coordinar</button>
+            <button class="filter-btn" onclick="filtrarEstado('amarillo', this)">🟡 Coordinadas</button>
+            <button class="filter-btn" onclick="filtrarEstado('verde', this)">🟢 Realizadas</button>
+            <button class="filter-btn" onclick="filtrarPrioritarias(this)">⭐ Túnicas en Red</button>
+          </div>
+
+          <button class="primary add-school-btn" onclick="abrirModalAgregar()">+ Agregar escuela</button>
         </div>
 
         <div class="map-layout">
