@@ -36,7 +36,6 @@
       </section>
 
       <section id="mapa" class="section active">
-        
         <div class="toolbar map-toolbar">
           <div class="filter-buttons filter-left">
             <button class="filter-btn" onclick="filtrarEstado('rojo', this)">🔴 Sin coordinar</button>
@@ -94,6 +93,7 @@
       <section id="estadisticas" class="section">
         <div class="empty-card">
           <h2>Estadísticas</h2>
+          <p>Acá vas a ver el avance anual de las charlas.</p>
           <div id="resumenTexto"></div>
         </div>
       </section>
@@ -101,6 +101,7 @@
       <section id="datos" class="section">
         <div class="empty-card">
           <h2>Importar / Exportar</h2>
+          <p>Exportá tus escuelas a JSON para respaldo o para subir una nueva versión.</p>
 
           <div class="data-actions">
             <button class="primary" onclick="exportarJSON()">Exportar JSON</button>
@@ -111,10 +112,59 @@
             <button class="danger" onclick="borrarTodo()">Borrar todo</button>
           </div>
 
-          <textarea id="jsonPreview"></textarea>
+          <textarea id="jsonPreview" readonly placeholder="Acá aparecerá el JSON exportado..."></textarea>
         </div>
       </section>
     </main>
+  </div>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <button class="close" onclick="cerrarModal()">×</button>
+      <h2 id="modalTitulo">Agregar escuela</h2>
+
+      <form id="formEscuela">
+        <input type="hidden" id="editId" />
+
+        <div class="grid">
+          <label>Escuela N° <input id="escuela" required /></label>
+          <label>Nombre <input id="nombre" /></label>
+          <label>Dirección <input id="direccion" required /></label>
+          <label>Localidad <input id="localidad" /></label>
+          <label>Departamento <input id="departamento" /></label>
+          <label>Tipo <input id="tipo" placeholder="Pública - Urbana" /></label>
+          <label>Teléfono <input id="telefono" /></label>
+          <label>Latitud <input id="lat" type="number" step="any" required /></label>
+          <label>Longitud <input id="lng" type="number" step="any" required /></label>
+
+          <label>Estado
+            <select id="estado">
+              <option value="rojo">Sin coordinar</option>
+              <option value="amarillo">Coordinada</option>
+              <option value="verde">Realizada</option>
+            </select>
+          </label>
+
+          <label>Fecha coordinada <input id="fechaCoordinada" type="datetime-local" /></label>
+          <label>Fecha realizada <input id="fechaRealizada" type="datetime-local" /></label>
+          <label>Charlistas <input id="charlistas" /></label>
+          <label>Alumnos <input id="alumnos" type="number" min="0" /></label>
+          <label>Imagen grupo / link <input id="imagenGrupo" /></label>
+          <label>Formulario firmado / link <input id="imagenFormulario" /></label>
+        </div>
+
+        <label class="check">
+          <input id="prioritaria" type="checkbox" />
+          Prioritaria Túnicas en Red
+        </label>
+
+        <label>Observaciones
+          <textarea id="observaciones"></textarea>
+        </label>
+
+        <button class="primary full" type="submit">Guardar escuela</button>
+      </form>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
